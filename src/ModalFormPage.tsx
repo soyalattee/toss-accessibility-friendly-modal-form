@@ -55,9 +55,9 @@ const ModalFormPage = () => {
   const handleOpenFormModal = async () => {
     try {
       const result = await openModal(FormModal, {
-        title: '회원가입',
-        description: '회원가입 폼입니다.',
-        initialData: { name: '', email: '' },
+        title: '신청 폼',
+        description: '이메일과 FE 경력 연차 등 간단한 정보를 입력해주세요.',
+        initialData: { name: '', email: '', career: '', link: '' },
       });
 
       if (result) {

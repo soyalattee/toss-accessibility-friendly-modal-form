@@ -6,13 +6,13 @@ import type { BaseModalProps } from '../types/modal';
 interface FormModalProps extends BaseModalProps {
   title: string;
   description?: string;
-  initialData?: { name: string; email: string };
+  initialData?: { name: string; email: string; career: string; link?: string };
 }
 
 export const FormModal = ({
   title,
   description,
-  initialData = { name: '', email: '' },
+  initialData = { name: '', email: '', career: '', link: '' },
   onClose,
   modalId,
 }: FormModalProps) => {
@@ -34,6 +34,12 @@ export const FormModal = ({
       newErrors.email = '유효한 이메일 주소를 입력해주세요.';
     }
 
+    if (!formData.career) {
+      newErrors.career = '경력을 선택해주세요.';
+    }
+
+    // link는 선택사항이므로 검증하지 않음
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -54,6 +60,16 @@ export const FormModal = ({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // 실시간 에러 제거
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
@@ -141,6 +157,80 @@ export const FormModal = ({
               style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}
             >
               {errors.email}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label
+            htmlFor="career"
+            style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}
+          >
+            경력 *
+          </label>
+          <select
+            id="career"
+            name="career"
+            value={formData.career}
+            onChange={handleSelectChange}
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: `1px solid ${errors.career ? '#ef4444' : '#d1d5db'}`,
+              borderRadius: '4px',
+              fontSize: '14px',
+              backgroundColor: 'white',
+            }}
+            aria-invalid={!!errors.career}
+            aria-describedby={errors.career ? 'career-error' : undefined}
+          >
+            <option value="">경력을 선택해주세요</option>
+            <option value="0-3년">0-3년</option>
+            <option value="4-7년">4-7년</option>
+            <option value="7년이상">7년이상</option>
+          </select>
+          {errors.career && (
+            <div
+              id="career-error"
+              role="alert"
+              style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}
+            >
+              {errors.career}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <label
+            htmlFor="link"
+            style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}
+          >
+            링크 (선택사항)
+          </label>
+          <input
+            type="url"
+            id="link"
+            name="link"
+            value={formData.link || ''}
+            onChange={handleInputChange}
+            placeholder="https://example.com"
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: `1px solid ${errors.link ? '#ef4444' : '#d1d5db'}`,
+              borderRadius: '4px',
+              fontSize: '14px',
+            }}
+            aria-invalid={!!errors.link}
+            aria-describedby={errors.link ? 'link-error' : undefined}
+          />
+          {errors.link && (
+            <div
+              id="link-error"
+              role="alert"
+              style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}
+            >
+              {errors.link}
             </div>
           )}
         </div>
