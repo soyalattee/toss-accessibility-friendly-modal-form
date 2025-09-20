@@ -5,17 +5,21 @@ import type { BaseModalProps } from '../types/modal';
 
 interface FormModalProps extends BaseModalProps {
   title: string;
+  description?: string;
   initialData?: { name: string; email: string };
 }
 
 export const FormModal = ({
   title,
+  description,
   initialData = { name: '', email: '' },
   onClose,
+  modalId,
 }: FormModalProps) => {
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const titleId = `modal-title-${Date.now()}`;
+  const titleId = `modal-title-${modalId}`;
+  const descriptionId = `modal-description-${modalId}`;
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -67,7 +71,11 @@ export const FormModal = ({
       >
         {title}
       </h2>
-
+      {description && (
+        <p id={descriptionId} style={{ margin: '0 0 16px 0' }}>
+          {description}
+        </p>
+      )}
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '16px' }}>
           <label
