@@ -1,0 +1,19 @@
+/* Accessible focus ring */
+.a11y-focus:focus-visible {
+  outline: 3px solid #2563eb; /* blue-600 */
+  outline-offset: 3px;
+}
+
+/* High-contrast fallback for browsers that do not support :focus-visible */
+.a11y-focus:focus {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+/* Optional: custom focus border change without layout shift */
+.a11y-focus {
+  border-color: #d1d5db;
+}
+.a11y-focus:focus-visible {
+  border-color: #2563eb;
+}
