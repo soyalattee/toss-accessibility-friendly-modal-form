@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useModal } from './entities/modal/hooks/useModal';
 import { FormModal } from './entities/modal/components/FormModal';
+import { LongFormModal } from './entities/modal/components/LongFormModal';
 
 const ModalFormPage = () => {
   const { openModal } = useModal();
@@ -38,7 +39,23 @@ const ModalFormPage = () => {
       console.error('Modal error:', error);
     }
   };
+  const handleOpenLongFormModal = async () => {
+    try {
+      const result = await openModal(LongFormModal, {
+        title: '긴 회원가입',
+        description: '긴 회원가입 폼입니다.',
+        initialData: { name: '', email: '', specialty: '' },
+      });
 
+      if (result) {
+        setResultArray((prev) => [...prev, result]);
+      } else {
+        console.log('Modal cancelled');
+      }
+    } catch (error) {
+      console.error('Modal error:', error);
+    }
+  };
   /* 여기에 구현해 주세요 */
   return (
     <div
@@ -65,6 +82,20 @@ const ModalFormPage = () => {
       >
         Open Form Modal
       </button>
+      <button
+        className="a11y-focus"
+        onClick={handleOpenLongFormModal}
+        style={{
+          padding: '8px 16px',
+          border: '1px solid #d1d5db',
+          borderRadius: '4px',
+          backgroundColor: 'white',
+          cursor: 'pointer',
+          maxWidth: '320px',
+        }}
+      >
+        Open Long Form Modal
+      </button>
       <div
         style={{
           display: 'flex',
@@ -79,6 +110,10 @@ const ModalFormPage = () => {
             <li key={index}>{JSON.stringify(result)}</li>
           ))}
         </ul>
+      </div>
+      <div>
+        <h3>스크롤 생성을 위한 빈공간입니다</h3>
+        <div style={{ height: '1000px' }}></div>
       </div>
     </div>
   );
