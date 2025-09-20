@@ -7,6 +7,21 @@ const ModalFormPage = () => {
   const { openModal } = useModal();
   const [resultArray, setResultArray] = useState<any[]>([]);
 
+  // 현재 포커스된 요소 확인
+  console.log(document.activeElement);
+
+  useEffect(() => {
+    const logFocus = (e: FocusEvent) => {
+      console.log('Focus moved to:', e.target);
+    };
+    // 포커스 변화 모니터링
+    document.addEventListener('focusin', logFocus);
+
+    return () => {
+      document.removeEventListener('focusin', logFocus);
+    };
+  }, [document.activeElement]);
+
   // 스타일 객체들
   const containerStyle: React.CSSProperties = {
     display: 'flex',
@@ -47,6 +62,8 @@ const ModalFormPage = () => {
 
       if (result) {
         setResultArray((prev) => [...prev, result]);
+      } else {
+        console.log('Modal cancelled');
       }
     } catch (error) {
       console.error('Modal error:', error);
@@ -62,12 +79,13 @@ const ModalFormPage = () => {
 
       if (result) {
         setResultArray((prev) => [...prev, result]);
+      } else {
+        console.log('Modal cancelled');
       }
     } catch (error) {
       console.error('Modal error:', error);
     }
   };
-
   /* 여기에 구현해 주세요 */
   return (
     <div style={containerStyle}>

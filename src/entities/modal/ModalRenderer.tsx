@@ -71,18 +71,20 @@ export const ModalRenderer = ({ modalInstance }: ModalRendererProps) => {
   // 포커스 트랩
   useEffect(() => {
     if (state === 'open' && modalRef.current) {
-      // 모달을 열 때 현재 활성화된 요소(버튼) 저장
       const modal = modalRef.current;
-      // 처음에는 제목 요소에 포커스
-      const titleElement = modal.querySelector(
-        'h1, h2, h3, h4, h5, h6, [role="heading"]'
-      );
+
+      // h2 제목 요소 찾기 및 포커스 가능하게 만들기
+      const titleElement = modal.querySelector('h2') as HTMLElement;
+      if (titleElement && !titleElement.hasAttribute('tabindex')) {
+        titleElement.setAttribute('tabindex', '-1');
+      }
 
       const focusableElements = modal.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
-      const firstElement = titleElement as HTMLElement;
-      const lastElement = focusableElements[
+
+      const firstInteractiveElement = focusableElements[0] as HTMLElement;
+      const lastInteractiveElement = focusableElements[
         focusableElements.length - 1
       ] as HTMLElement;
 
@@ -90,20 +92,38 @@ export const ModalRenderer = ({ modalInstance }: ModalRendererProps) => {
         if (e.key !== 'Tab') return;
 
         if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            lastElement?.focus();
+          // Shift+Tab: 첫 번째 인터랙티브 요소에서 제목으로
+          if (document.activeElement === firstInteractiveElement) {
+            titleElement?.focus();
+            e.preventDefault();
+          }
+          // 제목에서 마지막 인터랙티브 요소로
+          else if (document.activeElement === titleElement) {
+            lastInteractiveElement?.focus();
             e.preventDefault();
           }
         } else {
-          if (document.activeElement === lastElement) {
-            firstElement?.focus();
+          // Tab: 제목에서 첫 번째 인터랙티브 요소로
+          if (document.activeElement === titleElement) {
+            firstInteractiveElement?.focus();
+            e.preventDefault();
+          }
+          // 마지막 인터랙티브 요소에서 제목으로
+          else if (document.activeElement === lastInteractiveElement) {
+            titleElement?.focus();
             e.preventDefault();
           }
         }
       };
 
-      // 첫 번째 포커스 가능한 요소에 포커스
-      firstElement?.focus();
+      // 처음에는 h2 제목에 포커스
+      if (titleElement) {
+        titleElement.focus();
+      } else if (firstInteractiveElement) {
+        firstInteractiveElement.focus();
+      } else {
+        modal.focus();
+      }
 
       modal.addEventListener('keydown', handleTabKey);
       return () => modal.removeEventListener('keydown', handleTabKey);
